@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { User, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import LoginModal from './LoginModal';
-import { Role } from '@prisma/client';
+import { Role } from '../../types';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();

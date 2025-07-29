@@ -14,7 +14,7 @@ import SalesDashboard from './pages/dashboards/SalesDashboard';
 import SellerPortal from './pages/seller/SellerPortal';
 import SellerLogin from './pages/seller/SellerLogin';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import { Role } from '@prisma/client';
+import { Role } from './types';
 
 function App() {
   return (
