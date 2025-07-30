@@ -3,10 +3,14 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Package, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { mockProducts } from '../data/mockData';
 import FloatingPopup from '../components/common/FloatingPopup';
+import OAuthLoginModal from '../components/common/OAuthLoginModal';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProductDetail: React.FC = () => {
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [showBuyForm, setShowBuyForm] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -58,11 +62,11 @@ const ProductDetail: React.FC = () => {
             {/* Product Image Gallery */}
             <div className="relative">
               {/* Main Image */}
-              <div className="aspect-w-4 aspect-h-3 relative overflow-hidden rounded-lg">
+              <div className="w-full h-80 relative overflow-hidden rounded-lg">
                 <img
                   src={productImages[selectedImageIndex]}
                   alt={`${product.name} - Image ${selectedImageIndex + 1}`}
-                  className="w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
                 
                 {/* Navigation Arrows */}
@@ -168,7 +172,13 @@ const ProductDetail: React.FC = () => {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
                 <button
-                  onClick={() => setShowBuyForm(true)}
+                  onClick={() => {
+                    if (!user) {
+                      setShowLoginModal(true);
+                      return;
+                    }
+                    setShowBuyForm(true);
+                  }}
                   className="flex-1 bg-primary text-white px-6 py-3 rounded-xl font-semibold text-lg hover:bg-accent transition-colors"
                 >
                   Add to Cart
@@ -225,6 +235,20 @@ const ProductDetail: React.FC = () => {
           onClose={() => setShowBuyForm(false)}
         />
       )}
+      
+      {/* OAuth Login Modal */}
+      {showLoginModal && (
+        <OAuthLoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => {
+            setShowLoginModal(false);
+            setShowBuyForm(true);
+          }}
+          title="Sign in to Add to Cart"
+          subtitle="Please sign in to continue with your purchase"
+        />
+      )}
+      
       {showChat && (
         <div className="fixed bottom-4 right-4 bg-white rounded-xl shadow-2xl p-6 max-w-sm z-50">
           <div className="flex justify-between items-center mb-4">

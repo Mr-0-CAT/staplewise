@@ -11,20 +11,20 @@ export interface User {
 export enum Role {
   BUYER = 'BUYER',
   SELLER = 'SELLER',
-  ADMIN = 'ADMIN'
+  ADMIN = 'ADMIN',
+  SALES = 'SALES'
 }
 
 export enum QueryType {
-  PRICE_INQUIRY = 'PRICE_INQUIRY',
-  BULK_ORDER = 'BULK_ORDER',
-  SAMPLE_REQUEST = 'SAMPLE_REQUEST'
+  BUY = 'BUY',
+  SELL = 'SELL'
 }
 
 export enum QueryStatus {
   PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  RESOLVED = 'RESOLVED',
-  CANCELLED = 'CANCELLED'
+  ASSIGNED = 'ASSIGNED',
+  COMPLETED = 'COMPLETED',
+  REJECTED = 'REJECTED'
 }
 
 export enum OrderStatus {
@@ -65,7 +65,7 @@ export interface Query {
 
 export interface CompanyDetails {
   name: string;
-  location: string;
+  city: string;
   address: {
     street1: string;
     street2: string;

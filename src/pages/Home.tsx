@@ -1,13 +1,81 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Shield, Truck, CheckCircle, MapPin, Users, Package, TrendingUp, Search, ShoppingCart, CreditCard } from 'lucide-react';
-import { mockProducts } from '../data/mockData';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, Shield, Truck, CheckCircle, MapPin, Users, Package, TrendingUp, Search, ShoppingCart, CreditCard, Zap } from 'lucide-react';
 import FloatingPopup from '../components/common/FloatingPopup';
+import OAuthLoginModal from '../components/common/OAuthLoginModal';
+import { useAuth } from '../contexts/AuthContext';
 
 const Home: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [showBuyForm, setShowBuyForm] = useState(false);
   const [showSellForm, setShowSellForm] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
 
+  const handleCategoryClick = (categoryId: string) => {
+    if (categoryId === 'cashews') {
+      navigate('/products');
+    } else {
+      const categoryName = categoryId.replace('-', ' ').split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
+      setSelectedCategory(categoryName);
+      setShowComingSoon(true);
+    }
+  };
+
+  const categories = [
+    {
+      id: 'cashews',
+      name: 'Cashews',
+      icon: Package,
+      image: 'https://images.pexels.com/photos/4198019/pexels-photo-4198019.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Premium quality cashew kernels in various grades',
+      varieties: ['W180', 'W210', 'W240', 'W320', 'W400', 'LWP', 'SWP', 'BB']
+    },
+    {
+      id: 'cloves',
+      name: 'Cloves',
+      icon: Zap,
+      image: 'https://images.pexels.com/photos/4198020/pexels-photo-4198020.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Aromatic whole cloves for culinary and medicinal use',
+      varieties: ['Whole Cloves', 'Ground Cloves', 'Clove Oil']
+    },
+    {
+      id: 'chillies',
+      name: 'Chillies',
+      icon: Zap,
+      image: 'https://images.pexels.com/photos/4198021/pexels-photo-4198021.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Fresh and dried chillies with varying heat levels',
+      varieties: ['Red Chilli', 'Green Chilli', 'Kashmiri Chilli', 'Guntur Chilli']
+    },
+    {
+      id: 'star-anise',
+      name: 'Star Anise',
+      icon: Package,
+      image: 'https://images.pexels.com/photos/4198022/pexels-photo-4198022.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Star-shaped spice with sweet licorice flavor',
+      varieties: ['Whole Star Anise', 'Broken Star Anise', 'Ground Star Anise']
+    },
+    {
+      id: 'pepper',
+      name: 'Pepper',
+      icon: Package,
+      image: 'https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Black and white peppercorns for seasoning',
+      varieties: ['Black Pepper', 'White Pepper', 'Green Pepper', 'Pink Pepper']
+    },
+    {
+      id: 'cinnamon',
+      name: 'Cinnamon',
+      icon: Package,
+      image: 'https://images.pexels.com/photos/4110257/pexels-photo-4110257.jpeg?auto=compress&cs=tinysrgb&w=400',
+      description: 'Sweet and aromatic cinnamon bark and powder',
+      varieties: ['Ceylon Cinnamon', 'Cassia Cinnamon', 'Cinnamon Powder', 'Cinnamon Sticks']
+    }
+  ];
   const features = [
     {
       icon: Shield,
@@ -142,20 +210,31 @@ const Home: React.FC = () => {
               ensuring transparency, compliance, and competitive pricing
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 max-w-md sm:max-w-none mx-auto animate-fade-in-up delay-500">
-              <Link
-                to="/products"
+              <button
+                onClick={() => {
+                  const categoriesSection = document.getElementById('categories-section');
+                  if (categoriesSection) {
+                    categoriesSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 className="bg-secondary text-primary px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base md:text-lg hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105 shadow-soft-lg relative overflow-hidden group"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 Explore Products
-              </Link>
+              </button>
               <button
                 onClick={() => setShowSellForm(true)}
+                onClick={() => {
+                  if (!user) {
+                    window.location.href = '/register';
+                  } else {
+                    setShowSellForm(true);
+                  }
+                }}
                 className="border-2 border-secondary text-secondary px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base md:text-lg hover:bg-secondary hover:text-primary transition-all duration-300 relative overflow-hidden group"
               >
                 <div className="absolute inset-0 bg-secondary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                 <span className="relative z-10">Join as Seller</span>
-                Join as Seller
               </button>
             </div>
           </div>
@@ -233,7 +312,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Product Categories */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-32 relative overflow-hidden">
+      <section id="categories-section" className="py-12 sm:py-16 md:py-20 lg:py-24 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
@@ -246,70 +325,59 @@ const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold font-playfair text-primary mb-3 sm:mb-4 md:mb-6 px-4 relative">
-              Premium Cashew Products
+              Product Categories
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-primary to-accent rounded-full"></div>
             </h2>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 max-w-3xl mx-auto px-4 leading-relaxed">
-              Discover our wide range of cashew grades sourced from India's finest production regions
+              Explore our comprehensive range of premium spices and agricultural products
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-            {mockProducts.slice(0, 8).map((product) => (
-              <Link
-                key={product.id}
-                to={`/products/${product.id}`}
-                className="group bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-2 overflow-hidden relative"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                onClick={() => handleCategoryClick(category.id)}
+                className="group relative overflow-hidden rounded-xl shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-2 cursor-pointer h-64 md:h-80"
               >
-                {/* Product Card Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                {/* Background Image */}
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
                 
-                <div className="aspect-w-4 aspect-h-3 overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-32 sm:h-40 md:h-48 object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  {/* Image Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <div className="p-3 sm:p-4 md:p-6 relative z-10">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="bg-primary/10 text-primary px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs font-semibold group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                      {product.grade}
-                    </span>
-                    <div className="flex items-center text-gray-500 text-xs">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      {product.location}
-                    </div>
-                  </div>
-                  <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold font-playfair text-primary mb-2 line-clamp-2">
-                    {product.name}
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                
+                {/* Content Overlay */}
+                <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6">
+                  <h3 className="text-xl md:text-2xl font-bold font-playfair text-white mb-2 group-hover:-translate-y-1 transition-transform duration-300">
+                    {category.name}
                   </h3>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-accent group-hover:text-primary transition-colors duration-300">
-                      ₹{product.pricePerKg.toLocaleString()}
-                    </span>
-                    <span className="text-xs text-gray-500">per kg</span>
-                  </div>
-                  <div className="mt-1 sm:mt-2 text-xs text-gray-600">
-                    Stock: {product.stock} tonnes
+                  <p className="text-sm text-gray-200 mb-3 opacity-90 line-clamp-2">
+                    {category.description}
+                  </p>
+                  <div className="flex items-center text-white/90 text-sm font-medium">
+                    <Package className="w-4 h-4 mr-2" />
+                    <span>{category.varieties.length} varieties</span>
                   </div>
                 </div>
-              </Link>
+                
+                {/* Hover Effect Border */}
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-secondary/60 rounded-xl transition-colors duration-300"></div>
+              </div>
             ))}
           </div>
 
-          <div className="text-center mt-6 sm:mt-8 md:mt-12">
-            <Link
-              to="/products"
-              className="inline-flex items-center bg-primary text-white px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base md:text-lg hover:bg-accent transition-all duration-300 transform hover:scale-105 relative overflow-hidden group"
+          <div className="text-center mt-8 md:mt-12">
+            <button
+              className="inline-flex items-center bg-primary text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-semibold text-base md:text-lg hover:bg-accent transition-all duration-300 transform hover:scale-105 relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              View All Products
-              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ml-2" />
-            </Link>
+              View All Categories
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </button>
           </div>
         </div>
       </section>
@@ -368,7 +436,13 @@ const Home: React.FC = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 justify-center px-4 max-w-md sm:max-w-none mx-auto">
                 <button
-                  onClick={() => setShowBuyForm(true)}
+                  onClick={() => {
+                    if (!user) {
+                     setShowLoginModal(true);
+                    } else {
+                      setShowBuyForm(true);
+                    }
+                  }}
                   className="bg-primary text-white px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 lg:py-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm md:text-base lg:text-lg hover:bg-accent transition-all duration-300 transform hover:-translate-y-0.5 shadow-soft hover:shadow-soft-lg text-center relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
@@ -380,7 +454,6 @@ const Home: React.FC = () => {
                 >
                   <div className="absolute inset-0 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                   <span className="relative z-10">Browse Products</span>
-                  Browse Products
                 </Link>
               </div>
             </div>
@@ -400,6 +473,64 @@ const Home: React.FC = () => {
           type="sell"
           onClose={() => setShowSellForm(false)}
         />
+      )}
+
+      {/* OAuth Login Modal */}
+      {showLoginModal && (
+        <OAuthLoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => {
+            setShowLoginModal(false);
+            setShowBuyForm(true);
+          }}
+          title="Sign in to Continue"
+          subtitle="Please sign in to start your procurement journey"
+        />
+      )}
+
+      {/* Coming Soon Modal */}
+      {showComingSoon && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl transform animate-fade-in-up">
+            <div className="p-8 text-center">
+              {/* Icon */}
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/10 to-accent/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Package className="w-8 h-8 text-primary" />
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-2xl font-bold font-playfair text-primary mb-4">
+                Coming Soon!
+              </h3>
+              
+              {/* Message */}
+              <p className="text-gray-600 mb-2 text-lg">
+                <span className="font-semibold text-primary">{selectedCategory}</span> listing page
+              </p>
+              <p className="text-gray-500 mb-8 text-sm leading-relaxed">
+                We're working hard to add more product categories to our platform. 
+                Stay tuned for updates!
+              </p>
+              
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button
+                  onClick={() => setShowComingSoon(false)}
+                  className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-accent transition-colors"
+                >
+                  Got it!
+                </button>
+                <Link
+                  to="/products"
+                  onClick={() => setShowComingSoon(false)}
+                  className="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors text-center"
+                >
+                  Browse Cashews
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

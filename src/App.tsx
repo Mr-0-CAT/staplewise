@@ -9,6 +9,7 @@ import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Register from './pages/Register';
 import AdminDashboard from './pages/dashboards/AdminDashboard';
 import SalesDashboard from './pages/dashboards/SalesDashboard';
 import SellerPortal from './pages/seller/SellerPortal';
@@ -30,6 +31,7 @@ function App() {
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/register" element={<Register />} />
               
               {/* Protected Routes */}
               <Route path="/admin" element={

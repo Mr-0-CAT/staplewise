@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { Role } from '../../types';
 
 interface LoginModalProps {
   onClose: () => void;
@@ -16,7 +17,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
     name: '',
     phone: '',
     companyName: '',
-    role: 'BUYER' // Changed from Role.BUYER
+    role: Role.BUYER
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -176,8 +177,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                   >
-                    <option value="BUYER">Buyer</option>
-                    <option value="SELLER">Seller</option>
+                    <option value={Role.BUYER}>Buyer</option>
+                    <option value={Role.SELLER}>Seller</option>
                   </select>
                 </div>
               </>
@@ -194,7 +195,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
 
           <div className="mt-6 text-center">
             <button
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => {
+                if (isLogin) {
+                  onClose();
+                  window.location.href = '/register';
+                } else {
+                  setIsLogin(true);
+                }
+              }}
               className="text-primary hover:text-primary/80 transition-colors text-sm"
             >
               {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}

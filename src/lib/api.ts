@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { Product, Query, Order, QueryType, QueryStatus, OrderStatus, Role } from '@prisma/client';
 
 export class ProductService {
   static async getAllProducts(filters?: {

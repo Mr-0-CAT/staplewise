@@ -3,9 +3,13 @@ import { Link } from 'react-router-dom';
 import { MapPin, Filter, Search, X } from 'lucide-react';
 import { mockProducts, cashewGrades } from '../data/mockData';
 import FloatingPopup from '../components/common/FloatingPopup';
+import OAuthLoginModal from '../components/common/OAuthLoginModal';
+import { useAuth } from '../contexts/AuthContext';
 
 const Products: React.FC = () => {
+  const { user } = useAuth();
   const [showBuyForm, setShowBuyForm] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string>('');
   const [filters, setFilters] = useState({
@@ -48,6 +52,11 @@ const Products: React.FC = () => {
   });
 
   const handleBuyClick = (productId: string) => {
+    if (!user) {
+      setSelectedProductId(productId);
+      setShowLoginModal(true);
+      return;
+    }
     setSelectedProductId(productId);
     setShowBuyForm(true);
   };
@@ -136,11 +145,11 @@ const Products: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts.map((product) => (
             <div key={product.id} className="bg-white rounded-xl shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-              <div className="aspect-w-4 aspect-h-3 overflow-hidden">
+              <div className="w-full h-48 overflow-hidden relative">
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-36 sm:h-48 object-cover hover:scale-110 transition-transform duration-300"
+                  className="absolute inset-0 w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                 />
               </div>
               <div className="p-4 sm:p-6">
@@ -316,6 +325,19 @@ const Products: React.FC = () => {
           type="buy"
           productId={selectedProductId}
           onClose={() => setShowBuyForm(false)}
+        />
+      )}
+
+      {/* OAuth Login Modal */}
+      {showLoginModal && (
+        <OAuthLoginModal
+          onClose={() => setShowLoginModal(false)}
+          onSuccess={() => {
+            setShowLoginModal(false);
+            setShowBuyForm(true);
+          }}
+          title="Sign in to Buy Products"
+          subtitle="Please sign in to continue with your purchase"
         />
       )}
     </div>

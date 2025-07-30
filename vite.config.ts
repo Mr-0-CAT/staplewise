@@ -21,4 +21,12 @@ export default defineConfig({
     exclude: ['lucide-react'],
     include: ['buffer', 'stream-browserify', 'util']
   },
+  build: {
+    rollupOptions: {
+      external: [
+        '.prisma/client/index-browser',
+        '@prisma/client'
+      ]
+    }
+  }
 });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, MessageCircle } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import { mockProducts, cashewGrades } from '../../data/mockData';
 
 interface FloatingPopupProps {
@@ -9,6 +10,7 @@ interface FloatingPopupProps {
 }
 
 const FloatingPopup: React.FC<FloatingPopupProps> = ({ type, productId, onClose }) => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     productId: productId || '',
     quantity: '',
@@ -21,6 +23,14 @@ const FloatingPopup: React.FC<FloatingPopupProps> = ({ type, productId, onClose 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if user is logged in
+    if (!user) {
+      alert('Please login to submit a query. Click the Login button in the header.');
+      onClose();
+      return;
+    }
+    
     // Handle form submission
     console.log('Form submitted:', { type, ...formData });
     // In a real app, this would send to an API

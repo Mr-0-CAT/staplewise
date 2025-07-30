@@ -1,5 +1,6 @@
 import { prisma } from './prisma';
 import { AuthService } from './auth';
+import { Role } from '@prisma/client';
 
 async function main() {
   console.log('🌱 Starting database seed...');
@@ -10,7 +11,7 @@ async function main() {
     password: 'password123',
     name: 'Admin User',
     phone: '+919876543210',
-    role: 'ADMIN',
+    role: Role.ADMIN,
   });
   console.log('✅ Created admin user');
 
@@ -20,7 +21,7 @@ async function main() {
     password: 'password123',
     name: 'Sales Employee',
     phone: '+919876543211',
-    role: 'SALES',
+    role: Role.SALES,
   });
   console.log('✅ Created sales user');
 
@@ -30,7 +31,7 @@ async function main() {
     password: 'password123',
     name: 'John Buyer',
     phone: '+919876543212',
-    role: 'BUYER',
+    role: Role.BUYER,
     companyName: 'ABC Foods',
   });
   console.log('✅ Created buyer user');
@@ -41,7 +42,7 @@ async function main() {
     password: 'password123',
     name: 'Jane Seller',
     phone: '+919876543213',
-    role: 'SELLER',
+    role: Role.SELLER,
     companyName: 'XYZ Cashews',
     gst: 'GST123456789',
   });
